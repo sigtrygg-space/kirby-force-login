@@ -15,6 +15,9 @@ Kirby::plugin('andrekelling/force-login', [
     'hooks' => [
         'route:before' => function () {
             $isActive = kirby()->option('andrekelling.force-login.is-active');
+            if (is_callable($isActive)) {
+                $isActive = $isActive();
+            }
             if (!$isActive) {
                 return;
             }
@@ -34,8 +37,11 @@ Kirby::plugin('andrekelling/force-login', [
 
             go($panelUrl.'/login?redirectAfterLogin=' . urlencode(kirby()->request()->path()));
         },
-        'route:after' => function () {
+        'route:after' => function () {            
             $isActive = kirby()->option('andrekelling.force-login.is-active');
+            if (is_callable($isActive)) {
+                $isActive = $isActive();
+            }
             if (!$isActive) {
                 return;
             }
