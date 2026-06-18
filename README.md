@@ -27,9 +27,32 @@ composer require andrekelling/kirby-force-login
 
 ## Usage
 
-It's active when the config `andrekelling.force-login.is-active` is set to true in a respective config file. 
+`andrekelling.force-login.is-active` supports `bool` and `callable` values in your config (for example in `site/config/config.php`).
 
-For example in `site/config/config.php`.
+### Bool example
+
+```php
+return [
+    'andrekelling.force-login' => [
+        'is-active' => true,
+    ],
+];
+```
+
+### Callable example
+
+```php
+return [
+    'andrekelling.force-login' => [
+        'is-active' => function (): bool {
+            if (!defined('SOMETHING') || SOMETHING !== true) return false;
+            $path = (string) kirby()->request()->path();
+            if (in_array($path, ['somepath', 'other/path', 'whatever/path.html'], true)) return false;
+            return true;
+        },
+    ],
+];
+```
 
 ## License
 
