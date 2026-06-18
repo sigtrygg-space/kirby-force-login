@@ -4,6 +4,7 @@
  * and redirect to the origin path location
  */
 
+use Kirby\Cms\App as Kirby;
 use Kirby\Cms\Url;
 use Kirby\Panel\Panel;
 use Kirby\Toolkit\Str;
