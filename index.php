@@ -8,17 +8,28 @@ use Kirby\Cms\Url;
 use Kirby\Panel\Panel;
 use Kirby\Toolkit\Str;
 
+$resolveIsActive = static function (): bool {
+    $isActive = kirby()->option('andrekelling.force-login.is-active');
+
+    if (is_bool($isActive)) {
+        return $isActive;
+    }
+
+    if (is_callable($isActive)) {
+        return (bool)$isActive();
+    }
+
+    // Defensive fallback for invalid option types: keep plugin inactive.
+    return false;
+};
+
 Kirby::plugin('andrekelling/force-login', [
     'options' => array(
         'is-active'         => false,
     ),
     'hooks' => [
-        'route:before' => function () {
-            $isActive = kirby()->option('andrekelling.force-login.is-active');
-            if (is_callable($isActive)) {
-                $isActive = $isActive();
-            }
-            if (!$isActive) {
+        'route:before' => function () use ($resolveIsActive) {
+            if ($resolveIsActive() !== true) {
                 return;
             }
             if (kirby()->user()) {
@@ -37,12 +48,8 @@ Kirby::plugin('andrekelling/force-login', [
 
             go($panelUrl.'/login?redirectAfterLogin=' . urlencode(kirby()->request()->path()));
         },
-        'route:after' => function () {            
-            $isActive = kirby()->option('andrekelling.force-login.is-active');
-            if (is_callable($isActive)) {
-                $isActive = $isActive();
-            }
-            if (!$isActive) {
+        'route:after' => function () use ($resolveIsActive) {
+            if ($resolveIsActive() !== true) {
                 return;
             }
             if (!kirby()->user()) {
