@@ -41,6 +41,8 @@ return [
 
 ### Callable example
 
+The callable should return `true` or `false` depending on your runtime checks.
+
 ```php
 return [
     'andrekelling.force-login' => [
